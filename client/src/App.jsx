@@ -7,12 +7,14 @@ import { Play } from './pages/Play'
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Auth } from './pages/Auth'
+import { Signup } from './pages/Signup'
 function App() {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path='/' element={<Layout />}>
         <Route index element={<Auth />} />
+        <Route path="/signup" element={<Signup/>}/>
         <Route path="/home" element={<Home />} />
 
         <Route path="/play" element={<Play/>} />

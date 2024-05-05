@@ -10,12 +10,15 @@ export const Auth = () => {
     const handleChangePassword= (e) => {
         setPassword(e.target.value)
     }
-    console.log(userName, password)
     const login = () => {
+        localStorage.setItem('userName',userName)
         navigate("/home", {
             state: {
             userName:userName
         }})
+    }
+    const navigateSignup = () => {
+        navigate("/signup")
     }
     return (
 
@@ -50,9 +53,10 @@ export const Auth = () => {
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <button onClick={()=>login()} type="button" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Log in</button>
-                                    </div>
+                                    <div className="flex justify-between">
+                                        <button onClick={()=>login()} type="button" className=" m-2 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Log in</button>
+                                <button onClick={() => navigateSignup()} type="button" className="m-2 flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Create new account</button>       
+                            </div>
                                 </form>
 
                                 

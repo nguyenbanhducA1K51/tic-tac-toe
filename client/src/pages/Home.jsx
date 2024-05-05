@@ -1,35 +1,39 @@
 import { useNavigate } from "react-router-dom"
-import { useEffect,useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "react-toastify"
 import { socket } from "../socket"
 import { useLocation } from "react-router-dom"
 
 export const Home = () => {
     const location = useLocation()
-    const state = location.state
-    const [name, setName] = useState('');
+    const [state, setState] = useState(location.state || {})
+    let userName=localStorage.getItem("userName")
+    const [name, setName] = useState(userName);
     const navigate = useNavigate()
-    const [roomErr,setRoomError]=useState('')
-    const [availRoom,setAvailRoom]=useState([])
-   
+    const [roomErr, setRoomError] = useState('')
+    const [availRoom, setAvailRoom] = useState([])
+
     useEffect(() => {
         socket.emit("get_avail_rooms")
-       console.log("state",state)
-        if (state && state.userName) {
-            setName(state.userName)
-        }
+        
+        
+    }, [])
+
+    useEffect(() => {
+        console.log("state", state)
         if (name == "") {
             let randomNumber = Math.random();
             let randomString = randomNumber.toString();
             let randStr = randomString.split('.')[1].slice(0, 4);
             setName(`anonymouss_${randStr}`)
         }
-    }, [])
-    socket.on('avail_rooms', (data)=> {
-        
+     },
+        [])
+    socket.on('avail_rooms', (data) => {
+
         console.log("availroom", data)
         setAvailRoom(data.avail_rooms)
-        
+
     })
     socket.on("room_connect", (data) => {
         console.log("room connect", data)
@@ -48,44 +52,45 @@ export const Home = () => {
         console.log('data', data);
         navigate("/play", {
             state: {
-                data: data ,
+                data: data,
                 usr_name: name,
                 // opp_name:""
-        } })
+            }
+        })
     })
     const createRoom = () => {
-       
+
         socket.emit("new_room", { "usr_name": name })
     }
     const join = () => {
-       
+
         const rid = document.getElementById("rid-input").value
         socket.emit("join_room", { "rid": rid, "usr_name": name })
     }
     return <>
-       
+
 
         <div className="flex items-center justify-center">
             <h1 className="font-bold text-blue-600 text-[40px]">Tic-Tac-Toe</h1>
-            </div>
-            <div className="flex w-full">
+        </div>
+        <div className="flex w-full">
             <div className="md:w-1/3 flex justify-center  ">
 
-                    <div  className="flex flex-col items-center  border rounded m-3 mt-2 p-2 ">
-                    
-                        <span>Available Room</span>
-                        <ul className="list-unstyled" id="room-list">
-                        {  availRoom && availRoom.map((item, index) => {
-                            
+                <div className="flex flex-col items-center  border rounded m-3 mt-2 p-2 ">
+
+                    <span>Available Room</span>
+                    <ul className="list-unstyled" id="room-list">
+                        {availRoom && availRoom.map((item, index) => {
+
                             return (
                                 <li key={index}> {item} </li>
                             )
-                        })}    
-                        </ul>
-                    </div>
+                        })}
+                    </ul>
                 </div>
+            </div>
             <div className="md:w-1/3 flex flex-col items-center justify-center ">
-                    <p id="enterName"> Hi {name} !</p>
+                <p id="enterName"> Hi {name} !</p>
                 <p className="font-weight-bold"> Enter Room ID:</p>
                 <div className="relative mb-4 flex w-full flex-wrap items-stretch">
                     <input
@@ -105,23 +110,26 @@ export const Home = () => {
                     </button>
                     {
                         roomErr != "" ? <>
-                            
+
 
                             <div className="w-full flex items-center  justify-center my-2 text-red-500 border border-red-500 p-2  rounded-md">
 
-                            <span > Wrong room number !</span>
+                                <span > Wrong room number !</span>
                             </div>
-                        </>:<></>
+                        </> : <></>
                     }
                 </div>
-                    <p> Or </p>
-                    <div className="flex">
-                    <button onClick={()=>createRoom()} id="create-room" className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"> Create new room</button>
-                    </div>
+                <p> Or </p>
+                <div className="flex justify-between w-full">
+                    <button type="button" onClick={() => createRoom()} id="create-room" className="m-2 w-full bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"> Create new room</button>
+                    <button type="button" onClick={() => { navigate("/") }} className="m-2 w-full bg-purple-500 hover:bg-purple-700 text-white py-2 px-4 rounded">Sign out</button>
 
                 </div>
-               
+
             </div>
-    
+           
+
+        </div>
+
     </>
 }
